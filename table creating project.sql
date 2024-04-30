@@ -120,3 +120,58 @@ SELECT*FROM branch;
 SELECT*FROM client;
 SELECT*FROM works_with;
 SELECT*FROM branch_supplier;
+
+-- various select commands : employee which are managed by the emp_id 102 name and surname listed by salary 
+SELECT first_name AS name ,last_name AS surname 
+FROM employee
+WHERE super_id = 102 
+ORDER BY salary DESC;
+
+-- employee name and surname and branch which are not supervised by  emp_id 100,listed by birth date
+SELECT first_name AS name,last_name AS surname,branch_id
+FROM employee
+WHERE super_id <> 1
+ORDER BY birth_date DESC;
+
+--listin employees between the salary ranges of 65000 and 110000 listing by sex
+SELECT first_name AS name , last_name AS surname,salary
+FROM employee
+WHERE  salary BETWEEN 65000 AND 110000
+ORDER BY sex ;
+
+-- aggregation examples: counting genders of employees 
+SELECT COUNT(sex),sex
+FROM employee
+GROUP BY sex;
+
+-- total sales made by employees to specific clients,listed by client id
+
+SELECT SUM(total_sales),client_id
+FROM works_with
+GROUP BY client_id
+ORDER BY client_id;
+
+--average salary of male employees 
+SELECT AVG(salary)
+FROM employee
+WHERE sex = 'M';
+
+--examples for wildcard usage : select supplier name  which have 'Label' in their name
+SELECT*
+FROM branch_supplier
+WHERE supplier_name LIKE '%Label%';
+
+-- joins:all branches and their managers
+SELECT employee.emp_id,employee.first_name,branch.branch_name
+FROM employee
+JOIN branch
+ON employee.emp_id=branch.mgr_id;
+
+--nested query find the names of all employees who sold over 30000 to a client
+SELECT employee.first_name,employee.last_name
+FROM employee
+WHERE employee.emp_id IN (
+    SELECT  works_with.emp_id
+    FROM works_with
+    WHERE works_with.total_sales > 30000
+);
